@@ -267,7 +267,7 @@ GameObject:
   - component: {fileID: 534267417}
   - component: {fileID: 534267416}
   - component: {fileID: 534267418}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Platform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -732,6 +732,9 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: -8653719598885068355, guid: 3258c6080d6430441ad9a02669f2ccf2, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 1524989075}
+    - targetCorrespondingSourceObject: {fileID: -8653719598885068355, guid: 3258c6080d6430441ad9a02669f2ccf2, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 1524989074}
   m_SourcePrefab: {fileID: 4843985084834002234, guid: 3258c6080d6430441ad9a02669f2ccf2, type: 3}
 --- !u!4 &1421327093 stripped
@@ -766,6 +769,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1524989075
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1524989073}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c203b50afb9d8e846bada3783dba3e08, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2116028904
 GameObject:
   m_ObjectHideFlags: 0
@@ -775,6 +790,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2116028905}
+  - component: {fileID: 2116028908}
   - component: {fileID: 2116028907}
   - component: {fileID: 2116028906}
   m_Layer: 0
@@ -864,6 +880,19 @@ Rigidbody2D:
   m_SleepingMode: 0
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!114 &2116028908
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2116028904}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a83cecbd4cdae7e41b5fec6f59f5bb54, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _stats: {fileID: 11400000, guid: a7bc7d0a01432034c82cef00bfd8b76d, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
