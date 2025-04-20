@@ -12,6 +12,7 @@ public class ScriptableStats : ScriptableObject
 
     [Header("MOVEMENT")]
     public float MaxSpeed = 14;
+    public float SprintMultiplier = 2f;
     public float airMultiplier = 1.5f;
     public float Acceleration = 120;
     public float GroundDeceleration = 60;
@@ -30,6 +31,8 @@ public class ScriptableStats : ScriptableObject
     public float DoubleJumpPower = 28;
     public float MaxFallSpeed = 40;
     public float FallAcceleration = 110;
+    public float MaxVeryFallSpeed = 60;
+    public float VeryFallAcceleration = 30;
     public float JumpEndEarlyGravityModifier = 3;
     public float CoyoteTime = .15f;
     public float JumpBuffer = .2f;

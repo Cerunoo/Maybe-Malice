@@ -19,11 +19,14 @@ public class PlayerController : MonoBehaviour, IPlayerController
 
     #region Interface
 
+    public ScriptableStats Stats => _stats;
     public Vector2 FrameDirection => _frameVelocity;
     public float HorizontalInput => _frameInput.Horizontal;
+    public bool SprintMove => _frameInput.Sprint;
     public event Action<bool, float> GroundedChanged;
     public event Action<bool> Jumped;
-    public event Action Dashed;
+    public event Action<bool> DashedChanged;
+    public event Action Disturb;
 
     #endregion
 
@@ -50,6 +53,7 @@ public class PlayerController : MonoBehaviour, IPlayerController
         _frameInput = new FrameInput
         {
             Horizontal = Input.GetAxisRaw("Horizontal"),
+            Sprint = Input.GetKey(KeyCode.RightShift),
             JumpDown = Input.GetKeyDown(KeyCode.Space),
             JumpHeld = Input.GetKey(KeyCode.Space),
             DashDown = Input.GetKeyDown(KeyCode.LeftShift),
@@ -72,6 +76,12 @@ public class PlayerController : MonoBehaviour, IPlayerController
 
         if (_frameInput.DashDown)
             _dashToConsume = true;
+
+        FrameInput f = _frameInput;
+        if (f.Horizontal != 0 || f.Sprint || f.JumpDown || f.JumpHeld || f.DashDown)
+        {
+            Disturb?.Invoke();
+        }
     }
 
     private void FixedUpdate()
@@ -110,12 +120,16 @@ public class PlayerController : MonoBehaviour, IPlayerController
             _bufferedJumpUsable = true;
             _endedJumpEarly = false;
             GroundedChanged?.Invoke(true, Mathf.Abs(_frameVelocity.y));
+
+            dashDelay /= 3.5f;
         }
         else if (_grounded && !groundHit)
         {
             _grounded = false;
             _frameLeftGrounded = _time;
             GroundedChanged?.Invoke(false, 0);
+
+            dashDelay /= 3.5f;
         }
 
         Physics2D.queriesStartInColliders = _cachedQueryStartInColliders;
@@ -174,7 +188,9 @@ public class PlayerController : MonoBehaviour, IPlayerController
         }
         else
         {
-            _frameVelocity.x = Mathf.MoveTowards(_frameVelocity.x, _frameInput.Horizontal * _stats.MaxSpeed, _stats.Acceleration * Time.fixedDeltaTime);
+            float speed = _stats.MaxSpeed;
+            if (_frameInput.Sprint) speed *= _stats.SprintMultiplier;
+            _frameVelocity.x = Mathf.MoveTowards(_frameVelocity.x, _frameInput.Horizontal * speed, _stats.Acceleration * Time.fixedDeltaTime);
         }
     }
 
@@ -190,18 +206,27 @@ public class PlayerController : MonoBehaviour, IPlayerController
 
     #region Gravity
 
+    [SerializeField] private float fallSpeed;
     private void HandleGravity()
     {
         if (_grounded && _frameVelocity.y <= 0f)
         {
             _frameVelocity.y = _stats.GroundingForce;
         }
-        else
+        else if (_frameVelocity.y > -_stats.MaxFallSpeed)
         {
             float inAirGravity = _stats.FallAcceleration;
             if (_endedJumpEarly && _frameVelocity.y > 0) inAirGravity *= _stats.JumpEndEarlyGravityModifier;
             _frameVelocity.y = Mathf.MoveTowards(_frameVelocity.y, -_stats.MaxFallSpeed, inAirGravity * Time.fixedDeltaTime);
         }
+        else
+        {
+            float inAirGravity = _stats.VeryFallAcceleration;
+            if (_endedJumpEarly && _frameVelocity.y > 0) inAirGravity *= _stats.JumpEndEarlyGravityModifier;
+            _frameVelocity.y = Mathf.MoveTowards(_frameVelocity.y, -_stats.MaxVeryFallSpeed, inAirGravity * Time.fixedDeltaTime);
+        }
+
+        fallSpeed = _frameVelocity.y;
     }
 
     #endregion
@@ -230,7 +255,7 @@ public class PlayerController : MonoBehaviour, IPlayerController
         inDash = true;
         afterDash = true;
         dashDir = facingRight ? 1 : -1;
-        Dashed?.Invoke();
+        DashedChanged?.Invoke(true);
 
         float elapsedTime = 0f;
         while (elapsedTime < _stats.DashDuration)
@@ -245,6 +270,7 @@ public class PlayerController : MonoBehaviour, IPlayerController
         }
 
         inDash = false;
+        DashedChanged?.Invoke(false);
     }
 
     private void DashAbort()
@@ -261,6 +287,7 @@ public class PlayerController : MonoBehaviour, IPlayerController
 public struct FrameInput
 {
     public float Horizontal;
+    public bool Sprint;
     public bool JumpDown;
     public bool JumpHeld;
     public bool DashDown;
@@ -268,10 +295,15 @@ public struct FrameInput
 
 public interface IPlayerController
 {
+    public ScriptableStats Stats { get; }
+
     public Vector2 FrameDirection { get; }
     public float HorizontalInput { get; }
+    public bool SprintMove { get; }
 
     public event Action<bool, float> GroundedChanged;
     public event Action<bool> Jumped;
-    public event Action Dashed;
+    public event Action<bool> DashedChanged;
+
+    public event Action Disturb;
 }
