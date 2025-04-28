@@ -128,7 +128,7 @@ public class PlayerAnimator : MonoBehaviour
         if (inDash) _anim.SetTrigger(DashedKey);
         else
         {
-            _anim.SetTrigger(FallKey);
+            _anim.SetTrigger(UnDashKey);
             if (_grounded) _anim.SetTrigger(GroundedKey);
         }
     }
@@ -143,4 +143,5 @@ public class PlayerAnimator : MonoBehaviour
     private static readonly int GroundedKey = Animator.StringToHash("Grounded");
     private static readonly int VeryFallKey = Animator.StringToHash("VeryFall");
     private static readonly int DashedKey = Animator.StringToHash("Dashed");
+    private static readonly int UnDashKey = Animator.StringToHash("UnDash");
 }
